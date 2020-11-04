@@ -1,0 +1,21 @@
+.form-input__wrapper{
+  position: relative;
+}
+.form-input__input{
+  width: 150px;
+  height: 31px;
+
+  border: 1px solid #999999;
+
+  &.alert{
+    border: 1px solid #FF0000;
+  }
+}
+
+.form-input__alert{
+  position: absolute;
+  display: block;
+  font-size: 12px;
+  line-height: 20px;
+  color: #FF0000;
+}

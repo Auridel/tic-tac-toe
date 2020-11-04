@@ -1,0 +1,47 @@
+.board{
+  height: 450px;
+  width: 450px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.cell{
+  position: relative;
+  height: 140px;
+  width: 140px;
+
+  background-color: #78bec5;
+  border-radius: 14px;
+  cursor: pointer;
+
+  &.o-sym{
+    background-color: #ffaa50;
+    &:after{
+      content: "O";
+      position: absolute;
+      left: 50%;
+      top:50%;
+      display: inline-block;
+
+      transform: translateX(-50%) translateY(-50%);
+      text-shadow: 3px 2px 3px #999999;;
+      font-size: 105px;
+      color: #FFFFFF;
+    }
+  }
+  &.x-sym{
+    background-color: salmon;
+    &:after{
+      content: "X";
+      position: absolute;
+      left: 50%;
+      top:50%;
+      display: inline-block;
+
+      transform: translateX(-50%) translateY(-50%);
+      text-shadow: 3px 2px 3px #999999;;
+      font-size: 105px;
+      color: #FFFFFF;
+    }
+  }
+}

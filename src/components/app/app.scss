@@ -1,0 +1,20 @@
+html, body{
+  padding: 0;
+  margin: 0;
+  font-family: Roboto, sans-serif;
+}
+*{
+  box-sizing: border-box;
+}
+
+.main__header{
+  text-align: center;
+}
+.main__desc{
+  text-align: center;
+}
+.wrapper{
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}

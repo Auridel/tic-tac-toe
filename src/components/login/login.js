@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import InputField from "../inputField/inputField";
 import socket from "../../socket";
 
@@ -6,11 +6,20 @@ import socket from "../../socket";
 import "./login.scss";
 
 const Login = () => {
-    const [data, setData] = useState({room: "", userName: ""});
+    const [data, setData] = useState({room: "", userName: "", privacy: false});
     const [error, setError] = useState({room: false, userName: false});
-    const [alert, setAlert] = useState(false);
+    const [alert, setAlert] = useState("");
 
-
+    useEffect(() => {
+        socket.on("USER_EXISTS", onExists);
+        socket.on("ROOM_FULL", onFull);
+    },[])
+    const onExists = () => {
+        setAlert("Name is not available");
+    }
+    const onFull = () => {
+        setAlert("Room already full");
+    }
 
     const onRoomChange = (e) => {
         if(!e.target.value.trim()) setError({...error, room: true});
@@ -39,12 +48,12 @@ const Login = () => {
         if(!values.room.trim() || !values.userName.trim()){
             const keys = Object.keys(values);
             keys.forEach(key => {
-                if(!values[key].trim()) setError((prev) => {
+                if(key !=="privacy" && !values[key].trim()) setError((prev) => {
                     return {...prev, [key]: true}
                 })
             })
         }else {
-
+            socket.emit("ROOM_JOIN", data);
         }
     }
 
@@ -61,10 +70,17 @@ const Login = () => {
                 <label htmlFor="user" className="login__label">Username</label>
                 <InputField value={data.userName} inputId="user" error={error.userName} onChange={onUserNameChange} showError={() => onError(error.userName)}/>
             </div>
+            <label className="login__checkbox">
+                <input
+                    onChange={() => setData({...data, privacy: !data.privacy})}
+                    checked={data.privacy}
+                    type="checkbox"/>
+                    Make private?
+            </label>
             <button
                 onClick={() => sendData(data)}
                 className="login__submit">Enter Chat</button>
-            {alert? <span className="login__alert">User already exists</span> : ""}
+            {alert? <span className="login__alert">{alert}</span> : ""}
         </section>
     )
 };

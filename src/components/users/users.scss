@@ -23,6 +23,7 @@
   min-width: 200px;
   padding: 20px 10px;
   margin-top: 60px;
+  margin-bottom: 40px;
 
   font-weight: 500;
   font-size: 18px;
@@ -34,5 +35,23 @@
 
   &.alert{
     background-color: #fab1a9;
+  }
+}
+.ready-btn{
+  padding: 10px 15px;
+  width: 100px;
+  margin: 0 auto;
+  border: none;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 18px;
+  color: #FFFFFF;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #c83838;
+  box-shadow: 0 1px 0 #9d2222;
+
+  &.ready{
+    background-color: #71C838;
+    box-shadow: 0 1px 0 #539D22;
   }
 }

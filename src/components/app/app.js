@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {useDispatch} from "react-redux";
 import {connect} from "react-redux";
-import {SET_USERS, SET_USER_DATA} from "../../actions/actions";
+import {SET_USERS, SET_USER_DATA, SET_SIDE} from "../../actions/actions";
 import Login from "../login/login";
 import Board from "../board/board";
 import Users from "../users/users";
@@ -11,21 +11,23 @@ import Chat from "../chat/chat";
 import "./app.scss"
 
 
-const App = ({room}) => {
+const App = ({room, users, userName}) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
         socket.on("USER_JOINED", setUsers);
         socket.on("SET_USER_DATA", onUserData);
         socket.on("USER_LEFT", setUsers);
+
     }, [])
     const setUsers = (users) => {
-        console.log(users)
         dispatch(SET_USERS(users));
     }
     const onUserData = ({userName, room}) => {
         dispatch(SET_USER_DATA(userName, room));
     }
+
+
 
     return (
         <main className="main__container">

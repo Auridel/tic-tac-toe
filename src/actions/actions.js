@@ -20,8 +20,28 @@ const UPDATE_MESSAGES = (messages) => {
 }
 
 
+
+
+
+const SET_SIDE = (side) => {
+    return {
+        type: "SET_SIDE",
+        payload: side
+    }
+}
+
+const YOUR_MOVE = () => {
+    return {
+        type: "YOUR_MOVE"
+    }
+}
+
+
 export {
     SET_USER_DATA,
     SET_USERS,
-    UPDATE_MESSAGES
+    UPDATE_MESSAGES,
+
+    SET_SIDE,
+    YOUR_MOVE
 }

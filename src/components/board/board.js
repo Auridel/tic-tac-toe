@@ -1,21 +1,26 @@
-import React from "react";
+import React, {useState} from "react";
+import {connect} from "react-redux";
 
 import "./board.scss";
 
-const Board = () => {
+const Board = ({active, side, moves, username}) => {
+    const [move, setMove] = useState(false);
+
     return (
         <div className="board">
-            <div className="cell o-sym"/>
-            <div className="cell x-sym"/>
-            <div className="cell"/>
-            <div className="cell"/>
-            <div className="cell"/>
-            <div className="cell"/>
-            <div className="cell"/>
-            <div className="cell"/>
-            <div className="cell"/>
+            {moves.map((item, i) => <div key={i} className="cell"/>)}
         </div>
     )
 };
 
-export default Board;
+
+const mapStateToProps = (state) => {
+    return {
+        userName: state.userData.userName,
+        active: state.game.active,
+        side: state.game.side,
+        moves: state.game.moves
+    }
+}
+
+export default connect(mapStateToProps)(Board);

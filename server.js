@@ -7,6 +7,13 @@ const { v4: uuidv4 } = require('uuid');
 app.use(express.json());
 
 const db = new Map();
+class DefaultGame  {
+    isStarted = false;
+    isStopped = false;
+        isReady= {};
+        queue = [];
+        moves = [...Array(9)]
+}
 
 io.on("connection", (socket) => {
     console.log("connected");
@@ -16,7 +23,8 @@ io.on("connection", (socket) => {
                 new Map([
                     ["users", new Map()],
                     ["messages", []],
-                    ["privacy", {isPrivate: privacy}]
+                    ["privacy", {isPrivate: privacy}],
+                    ["game", new DefaultGame()]
                 ])
             );
         const userList = Array.from(db.get(room).get("users").values());
@@ -24,7 +32,9 @@ io.on("connection", (socket) => {
         else if(userList.length === 2) io.to(socket.id).emit("ROOM_FULL");
         else {
             db.get(room).get("users").set(socket.id, userName);
+            db.get(room).get("game").isReady[socket.id] = false;
             socket.join(room);
+
             const users = Array.from(db.get(room).get("users").values());
             io.to(room).emit("USER_JOINED", users);
             io.to(socket.id).emit("SET_USER_DATA", {userName, room});
@@ -42,11 +52,44 @@ io.on("connection", (socket) => {
         io.to(room).emit("NEW_MESSAGE", newMsg);
     })
 
+
+    socket.on("USER_READY", ({room}) => {
+        db.get(room).get("game").isReady[socket.id] = true;
+        const game = db.get(room).get("game");
+        let readyCount = 0;
+        for(let key in game.isReady){
+            if(game.isReady[key] === true) readyCount++;
+        }
+
+        if(readyCount === 2 && !game.isStarted && !game.isStopped) {
+            db.get(room).get("game").isStarted = true;
+            io.to(room).emit("GAME_STARTED");
+
+            const users = Array.from(db.get(room).get("users").values());
+            io.to(room).emit("MAKE_MOVE", {user: users[0], timer: Date.now()/1000 + 60});
+
+            console.log(db.get(room).get("game"))
+        }
+    })
+
+    socket.on("USER_MOVE", ({move, room}) => {
+        db.get(room).get("game").queue.push(socket.id);
+        const users = Object.fromEntries(db.get(room).get("users"));
+        db.get(room).get("game").moves[move] = users[socket.id];
+        io.to(room).emit("NEW_MOVE", db.get(room).get("game").moves);
+
+        const nextUser = Object.keys(users).filter(item => item !== socket.id)[0];
+        io.to(room).emit("MAKE_MOVE", {user: users[nextUser], timer: Date.now()/1000 + 60});
+
+        console.log(db.get(room).get("game"))
+    })
+
     socket.on("disconnect", () => {
         db.forEach((item, key) => {
             if(item.get("users").delete(socket.id)){
                 const users = Array.from(db.get(key).get("users").values());
                 socket.to(key).broadcast.emit("USER_LEFT", users);
+                if(!users.length) db.delete(key);
             }
         })
     })

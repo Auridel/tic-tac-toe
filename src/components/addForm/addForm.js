@@ -28,7 +28,7 @@ const AddForm = ({room}) => {
 
 const mapStateToProps = (state) => {
     return {
-        room: state.room
+        room: state.userData.room
     }
 }
 

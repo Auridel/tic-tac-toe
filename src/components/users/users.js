@@ -1,15 +1,34 @@
 import React from "react";
+import {connect} from "react-redux";
 
 import "./users.scss";
 
-const Users = () => {
+const Users = ({users}) => {
+
+    const showUsers = (arr) => {
+        if(arr.length > 1){
+            return arr.map(el => <div key={el} className="user">{el}</div>)
+        }
+        else return (
+            <>
+                <div className="user active">{arr[0]}</div>
+                <div className="user">Waiting...</div>
+            </>
+        )
+    }
+
     return (
         <aside className="users">
-            <div className="user active">User 1</div>
-            <div className="user">User 2</div>
+            {showUsers(users)}
             <div className="timer">0:20</div>
         </aside>
     )
 };
 
-export default Users;
+const mapStateToProps = (state) => {
+    return {
+        users: state.userData.users
+    }
+}
+
+export default connect(mapStateToProps)(Users);

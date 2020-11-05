@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 import {connect} from "react-redux";
 import socket from "../../socket";
-// import {UPDATE_MESSAGES} from "../../actions";
+import {UPDATE_MESSAGES} from "../../actions/actions";
 
 import "./messages.scss";
 
@@ -31,8 +31,8 @@ const Messages = ({messages, UPDATE_MESSAGES, userName}) => {
 
 const mapStateToProps = (state) => {
     return {
-        messages: state.messages,
-        userName: state.userName
+        messages: state.userData.messages,
+        userName: state.userData.userName
     }
 }
 const mapDispatchToProps = {

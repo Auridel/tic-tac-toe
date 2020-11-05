@@ -1,7 +1,7 @@
-const SET_USERNAME = (username) => {
+const SET_USER_DATA = (userName, room) => {
     return {
-        type: "SET_USERNAME",
-        payload: username
+        type: "SET_USER_DATA",
+        payload: {userName, room}
     }
 }
 
@@ -12,8 +12,16 @@ const SET_USERS = (users) => {
     }
 }
 
+const UPDATE_MESSAGES = (messages) => {
+    return {
+        type: "UPDATE_MESSAGES",
+        payload: messages
+    }
+}
+
 
 export {
-    SET_USERNAME,
-    SET_USERS
+    SET_USER_DATA,
+    SET_USERS,
+    UPDATE_MESSAGES
 }

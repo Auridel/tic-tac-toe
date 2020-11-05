@@ -4,7 +4,7 @@ const initialState = {
     side: "",
     moves: [...Array(9)],
     active: false,
-    timer: null
+    timer: 0
 }
 
 const gameReducer = (state = initialState, action) => {
@@ -16,10 +16,22 @@ const gameReducer = (state = initialState, action) => {
                 side: action.payload
             }
         }
+        case "SET_TIMER": {
+            return {
+                ...state,
+                timer: action.payload
+            }
+        }
         case "YOUR_MOVE": {
             return {
                 ...state,
-                active: true
+                active: action.payload
+            }
+        }
+        case "UPDATE_MOVES": {
+            return {
+                ...state,
+                moves: [...action.payload]
             }
         }
         default: return state;

@@ -30,9 +30,24 @@ const SET_SIDE = (side) => {
     }
 }
 
-const YOUR_MOVE = () => {
+const SET_TIMER = (timer) => {
     return {
-        type: "YOUR_MOVE"
+        type: "SET_TIMER",
+        payload: timer
+    }
+}
+
+const YOUR_MOVE = (bool) => {
+    return {
+        type: "YOUR_MOVE",
+        payload: bool
+    }
+}
+
+const UPDATE_MOVES = (moves) => {
+    return {
+        type: "UPDATE_MOVES",
+        payload: moves
     }
 }
 
@@ -43,5 +58,7 @@ export {
     UPDATE_MESSAGES,
 
     SET_SIDE,
-    YOUR_MOVE
+    SET_TIMER,
+    YOUR_MOVE,
+    UPDATE_MOVES
 }

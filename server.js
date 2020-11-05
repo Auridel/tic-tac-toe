@@ -3,6 +3,7 @@ const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const { v4: uuidv4 } = require('uuid');
+const {checkWin} = require("./utils");
 
 app.use(express.json());
 
@@ -67,8 +68,6 @@ io.on("connection", (socket) => {
 
             const users = Array.from(db.get(room).get("users").values());
             io.to(room).emit("MAKE_MOVE", {user: users[0], timer: Date.now()/1000 + 60});
-
-            console.log(db.get(room).get("game"))
         }
     })
 
@@ -78,10 +77,14 @@ io.on("connection", (socket) => {
         db.get(room).get("game").moves[move] = users[socket.id];
         io.to(room).emit("NEW_MOVE", db.get(room).get("game").moves);
 
-        const nextUser = Object.keys(users).filter(item => item !== socket.id)[0];
-        io.to(room).emit("MAKE_MOVE", {user: users[nextUser], timer: Date.now()/1000 + 60});
-
-        console.log(db.get(room).get("game"))
+        const winner = checkWin(db.get(room).get("game").moves);
+        if(winner) {
+            db.get(room).get("game").isStopped = true;
+            io.to(room).emit("GAME_OVER", {winner});
+        }else {
+            const nextUser = Object.keys(users).filter(item => item !== socket.id)[0];
+            io.to(room).emit("MAKE_MOVE", {user: users[nextUser], timer: Date.now()/1000 + 60});
+        }
     })
 
     socket.on("disconnect", () => {

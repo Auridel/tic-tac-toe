@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+  margin-bottom: 40px;
 
   background-color: #FFFFFF;
   border: 1px solid #999999;
@@ -47,4 +48,29 @@
 
   color: crimson;
   text-align: center;
+}
+
+.available-btn{
+  margin: 0 auto;
+  margin-bottom: 20px;
+  display: block;
+
+  background: none;
+  padding: 20px;
+  border-radius: 40px;
+  border: 1px solid black;
+}
+.available-list{
+  width: 300px;
+  margin: 0 auto;
+
+  list-style: none;
+  padding: 15px;
+}
+.available-list__item{
+  text-align: center;
+  padding: 10px;
+
+  border-radius: 3px;
+  border: 1px solid #b1b1b1;
 }

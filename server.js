@@ -15,11 +15,13 @@ class DefaultGame  {
         queue = [];
         moves = [...Array(9)]
 }
+const availableRooms  = [];
 
 io.on("connection", (socket) => {
     console.log("connected");
-    socket.on("ROOM_JOIN", ({room, userName, privacy = false}) => {
-        if(!db.has(room))
+    io.to(socket.id).emit("ROOMS", availableRooms);
+    socket.on("ROOM_JOIN", ({room, userName}) => {
+        if(!db.has(room)) {
             db.set(room,
                 new Map([
                     ["users", new Map()],
@@ -27,10 +29,17 @@ io.on("connection", (socket) => {
                     ["game", new DefaultGame()]
                 ])
             );
+            availableRooms.push(room);
+        }
         const userList = Array.from(db.get(room).get("users").values());
         if(userList.find(item => item === userName)) io.to(socket.id).emit("USER_EXISTS");
         else if(userList.length === 2) io.to(socket.id).emit("ROOM_FULL");
         else {
+            if(userList.length === 1) {
+                const idx = availableRooms.findIndex(item => item === room);
+                availableRooms.splice(idx, 1);
+            }
+
             db.get(room).get("users").set(socket.id, userName);
             db.get(room).get("game").isReady[socket.id] = false;
             socket.join(room);
@@ -66,7 +75,7 @@ io.on("connection", (socket) => {
             io.to(room).emit("GAME_STARTED");
 
             const users = Array.from(db.get(room).get("users").values());
-            io.to(room).emit("MAKE_MOVE", {user: users[0]});
+            io.to(room).emit("MAKE_MOVE", {user: users[Math.floor(Math.random()*2)]});
         }
     })
 
@@ -108,10 +117,19 @@ io.on("connection", (socket) => {
             if(item.get("users").delete(socket.id)){
                 const users = Array.from(db.get(key).get("users").values());
                 socket.to(key).broadcast.emit("USER_LEFT", users);
-                if(!users.length) db.delete(key);
-                else if(db.get(key).get("game").isStarted && !db.get(key).get("game").isStopped){
-                    db.get(key).get("game").isStopped = true;
-                    io.to(key).emit("GAME_OVER", {reason: "left"});
+                if(!users.length) {
+                    const idx = availableRooms.findIndex(item => item === key);
+                    availableRooms.splice(idx, 1);
+                    db.delete(key);
+                }
+                else {
+                    if(db.get(key).get("game").isStarted && !db.get(key).get("game").isStopped){
+                        db.get(key).get("game").isStopped = true;
+                        io.to(key).emit("GAME_OVER", {reason: "left"});
+                    }
+                    else {
+                        availableRooms.push(key);
+                    }
                 }
             }
         })

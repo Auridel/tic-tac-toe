@@ -52,6 +52,12 @@ const GAME_OVER = (msg) => {
     }
 }
 
+const RESTART = () => {
+    return {
+        type: "RESTART"
+    }
+}
+
 
 
 export {
@@ -62,5 +68,6 @@ export {
     SET_SIDE,
     YOUR_MOVE,
     UPDATE_MOVES,
-    GAME_OVER
+    GAME_OVER,
+    RESTART
 }

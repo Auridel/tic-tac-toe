@@ -94,6 +94,15 @@ io.on("connection", (socket) => {
         }
     })
 
+    socket.on("RESTART", ({room}) => {
+        const users = Array.from(db.get(room).get("users").keys());
+        db.get(room).set("game", new DefaultGame());
+        users.forEach(item => {
+            db.get(room).get("game").isReady[item] = false;
+        })
+        io.to(room).emit("GAME_RESTARTED");
+    })
+
     socket.on("disconnect", () => {
         db.forEach((item, key) => {
             if(item.get("users").delete(socket.id)){

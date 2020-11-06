@@ -2,26 +2,21 @@ import React, {useState, useEffect} from "react";
 import {connect} from "react-redux";
 import {useDispatch} from "react-redux";
 import socket from "../../socket";
-import {SET_SIDE, YOUR_MOVE} from "../../actions/actions";
+import {SET_SIDE, YOUR_MOVE, RESTART} from "../../actions/actions";
 
 import "./users.scss";
 
-const Users = ({users, room, userName, isStarted}) => {
-    const [full, setFull] = useState(false);
+const Users = ({users, room, userName, isStarted, isStopped}) => {
     const [ready, setReady] = useState(false);
     const [active, setActive] = useState(null);
     const dispatch = useDispatch();
 
 
-
     useEffect(() => {
         socket.on("GAME_STARTED", onStart);
-        socket.on("MAKE_MOVE", onMove)
-
-
+        socket.on("MAKE_MOVE", onMove);
+        socket.on("GAME_RESTARTED", onRestart);
     }, [])
-
-
 
     const onStart = () => {
         const idx = users.findIndex(item => item === userName);
@@ -35,13 +30,13 @@ const Users = ({users, room, userName, isStarted}) => {
 
         setActive(user);
     }
+    const onRestart = () => {
+        dispatch(RESTART());
+        setReady(false);
+    }
+    
 
 
-
-
-    useEffect(() => {
-        if(!full && users.length === 2) setFull(true);
-    }, [users])
 
     const showUsers = (arr) => {
         if(arr.length > 1){
@@ -58,6 +53,12 @@ const Users = ({users, room, userName, isStarted}) => {
     return (
         <aside className="users">
             {showUsers(users)}
+            {(isStarted && isStopped) ?
+                <button
+                    onClick={() => socket.emit("RESTART", {room})}
+                    className="ready-btn">Restart</button>
+                : ""
+            }
             {!isStarted && <button
                 onClick={() => {
                     setReady(true);

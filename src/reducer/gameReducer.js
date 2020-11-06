@@ -4,7 +4,7 @@ const initialState = {
     side: "",
     moves: [...Array(9)],
     active: false,
-    timer: 0
+    message: ""
 }
 
 const gameReducer = (state = initialState, action) => {
@@ -13,13 +13,8 @@ const gameReducer = (state = initialState, action) => {
             return {
                 ...state,
                 isStarted: true,
-                side: action.payload
-            }
-        }
-        case "SET_TIMER": {
-            return {
-                ...state,
-                timer: action.payload
+                side: action.payload,
+                message: "Game started!"
             }
         }
         case "YOUR_MOVE": {
@@ -32,6 +27,14 @@ const gameReducer = (state = initialState, action) => {
             return {
                 ...state,
                 moves: [...action.payload]
+            }
+        }
+        case "GAME_OVER": {
+            return {
+                ...state,
+                isStopped: true,
+                message: action.payload,
+                timer: 0
             }
         }
         default: return state;

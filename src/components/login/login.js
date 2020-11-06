@@ -6,7 +6,7 @@ import socket from "../../socket";
 import "./login.scss";
 
 const Login = () => {
-    const [data, setData] = useState({room: "", userName: "", privacy: false});
+    const [data, setData] = useState({room: "", userName: ""});
     const [error, setError] = useState({room: false, userName: false});
     const [alert, setAlert] = useState("");
 
@@ -70,13 +70,6 @@ const Login = () => {
                 <label htmlFor="user" className="login__label">Username</label>
                 <InputField value={data.userName} inputId="user" error={error.userName} onChange={onUserNameChange} showError={() => onError(error.userName)}/>
             </div>
-            <label className="login__checkbox">
-                <input
-                    onChange={() => setData({...data, privacy: !data.privacy})}
-                    checked={data.privacy}
-                    type="checkbox"/>
-                    Make private?
-            </label>
             <button
                 onClick={() => sendData(data)}
                 className="login__submit">Enter Chat</button>

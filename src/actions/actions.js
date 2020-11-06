@@ -30,12 +30,6 @@ const SET_SIDE = (side) => {
     }
 }
 
-const SET_TIMER = (timer) => {
-    return {
-        type: "SET_TIMER",
-        payload: timer
-    }
-}
 
 const YOUR_MOVE = (bool) => {
     return {
@@ -51,6 +45,14 @@ const UPDATE_MOVES = (moves) => {
     }
 }
 
+const GAME_OVER = (msg) => {
+    return {
+        type: "GAME_OVER",
+        payload: msg
+    }
+}
+
+
 
 export {
     SET_USER_DATA,
@@ -58,7 +60,7 @@ export {
     UPDATE_MESSAGES,
 
     SET_SIDE,
-    SET_TIMER,
     YOUR_MOVE,
-    UPDATE_MOVES
+    UPDATE_MOVES,
+    GAME_OVER
 }

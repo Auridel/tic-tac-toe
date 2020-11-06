@@ -2,15 +2,14 @@ import React, {useState, useEffect} from "react";
 import {connect} from "react-redux";
 import {useDispatch} from "react-redux";
 import socket from "../../socket";
-import {SET_SIDE, YOUR_MOVE, SET_TIMER} from "../../actions/actions";
+import {SET_SIDE, YOUR_MOVE} from "../../actions/actions";
 
 import "./users.scss";
 
-const Users = ({users, room, userName, isStarted, timer}) => {
+const Users = ({users, room, userName, isStarted}) => {
     const [full, setFull] = useState(false);
     const [ready, setReady] = useState(false);
     const [active, setActive] = useState(null);
-    const [countdown, setCountdown] = useState(null);
     const dispatch = useDispatch();
 
 
@@ -22,25 +21,7 @@ const Users = ({users, room, userName, isStarted, timer}) => {
 
     }, [])
 
-    useEffect(() => {
-        const timerHandler = setInterval(() => {
-            if(calcTime() <= 0) {
-                clearInterval(timerHandler);
-            }
-            else setCountdown(calcTime());
-        }, 1000)
 
-        return () => {
-            clearInterval(timerHandler);
-        }
-    },  [timer])
-
-
-    const calcTime = () => {
-        let left = Math.floor(timer - Date.now()/1000);
-        if(left < 10 && left >= 0) return "0" + left;
-        else return left;
-    }
 
     const onStart = () => {
         const idx = users.findIndex(item => item === userName);
@@ -48,8 +29,7 @@ const Users = ({users, room, userName, isStarted, timer}) => {
         else dispatch(SET_SIDE("o-sym"));
     }
 
-    const onMove = ({user, timer}) => {
-        dispatch(SET_TIMER(timer));
+    const onMove = ({user}) => {
         if(user === userName) dispatch(YOUR_MOVE(true));
         else dispatch(YOUR_MOVE(false));
 
@@ -78,7 +58,6 @@ const Users = ({users, room, userName, isStarted, timer}) => {
     return (
         <aside className="users">
             {showUsers(users)}
-            <div className="timer">{countdown > 0? `0:${countdown}` : "-:--"}</div>
             {!isStarted && <button
                 onClick={() => {
                     setReady(true);
@@ -95,7 +74,7 @@ const mapStateToProps = (state) => {
         room: state.userData.room,
         userName: state.userData.userName,
         isStarted: state.game.isStarted,
-        timer: state.game.timer
+        isStopped: state.game.isStopped
     }
 }
 

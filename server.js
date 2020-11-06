@@ -24,7 +24,6 @@ io.on("connection", (socket) => {
                 new Map([
                     ["users", new Map()],
                     ["messages", []],
-                    ["privacy", {isPrivate: privacy}],
                     ["game", new DefaultGame()]
                 ])
             );
@@ -67,23 +66,31 @@ io.on("connection", (socket) => {
             io.to(room).emit("GAME_STARTED");
 
             const users = Array.from(db.get(room).get("users").values());
-            io.to(room).emit("MAKE_MOVE", {user: users[0], timer: Date.now()/1000 + 60});
+            io.to(room).emit("MAKE_MOVE", {user: users[0]});
         }
     })
 
     socket.on("USER_MOVE", ({move, room}) => {
-        db.get(room).get("game").queue.push(socket.id);
         const users = Object.fromEntries(db.get(room).get("users"));
+
+        db.get(room).get("game").queue.push(socket.id);
         db.get(room).get("game").moves[move] = users[socket.id];
         io.to(room).emit("NEW_MOVE", db.get(room).get("game").moves);
 
         const winner = checkWin(db.get(room).get("game").moves);
         if(winner) {
             db.get(room).get("game").isStopped = true;
-            io.to(room).emit("GAME_OVER", {winner});
-        }else {
-            const nextUser = Object.keys(users).filter(item => item !== socket.id)[0];
-            io.to(room).emit("MAKE_MOVE", {user: users[nextUser], timer: Date.now()/1000 + 60});
+            io.to(room).emit("GAME_OVER", {reason: "win", winner});
+        }
+        else {
+            if(db.get(room).get("game").queue.length === 9) {
+                db.get(room).get("game").isStopped = true;
+                io.to(room).emit("GAME_OVER", {reason: "draw"});
+            }
+            else if(!db.get(room).get("game").isStopped){
+                const nextUser = Object.keys(users).filter(item => item !== socket.id)[0];
+                io.to(room).emit("MAKE_MOVE", {user: users[nextUser]});
+            }
         }
     })
 
@@ -93,6 +100,10 @@ io.on("connection", (socket) => {
                 const users = Array.from(db.get(key).get("users").values());
                 socket.to(key).broadcast.emit("USER_LEFT", users);
                 if(!users.length) db.delete(key);
+                else if(db.get(key).get("game").isStarted && !db.get(key).get("game").isStopped){
+                    db.get(key).get("game").isStopped = true;
+                    io.to(key).emit("GAME_OVER", {reason: "left"});
+                }
             }
         })
     })

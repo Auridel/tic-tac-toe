@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {connect} from "react-redux";
 import {useDispatch} from "react-redux";
 import classNames from "classnames";
@@ -7,8 +7,7 @@ import socket from "../../socket";
 
 import "./board.scss";
 
-const Board = ({active, side, moves, userName, room}) => {
-    const [move, setMove] = useState(false);
+const Board = ({active, side, moves, userName, room, isStopped}) => {
     const dispatch = useDispatch();
 
 
@@ -17,7 +16,7 @@ const Board = ({active, side, moves, userName, room}) => {
             {moves.map((item, i) =>
                 <div
                     onClick={() => {
-                        if(active && !moves[i]) {
+                        if(active && !moves[i] && !isStopped) {
                             dispatch(YOUR_MOVE(false));
                             const obj = {move: i, room: room}
                             socket.emit("USER_MOVE", obj);
@@ -26,8 +25,8 @@ const Board = ({active, side, moves, userName, room}) => {
                     key={i}
                     className={classNames({
                     "cell": true,
-                    "active-o": active && side === "o-sym",
-                    "active-x": active && side === "x-sym",
+                    "active-o": active && !isStopped && side === "o-sym",
+                    "active-x": active && !isStopped && side === "x-sym",
                     "o-sym": item && ((side === "o-sym" && userName === item) || (side === "x-sym" && userName !== item)),
                     "x-sym": item && ((side === "x-sym" && userName === item) || (side === "o-sym" && userName !== item))
                 })}/>)}
@@ -42,7 +41,8 @@ const mapStateToProps = (state) => {
         userName: state.userData.userName,
         active: state.game.active,
         side: state.game.side,
-        moves: state.game.moves
+        moves: state.game.moves,
+        isStopped: state.game.isStopped
     }
 }
 

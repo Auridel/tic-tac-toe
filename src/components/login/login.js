@@ -82,7 +82,7 @@ const Login = () => {
                 </div>
                 <button
                     onClick={() => sendData(data)}
-                    className="login__submit">Enter Chat</button>
+                    className="login__submit">Enter Game</button>
                 {alert? <span className="login__alert">{alert}</span> : ""}
             </section>
 

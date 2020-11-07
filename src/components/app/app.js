@@ -32,9 +32,9 @@ const App = ({room, message}) => {
         dispatch(UPDATE_MOVES(moves));
     }
     const onGameOver = (res) => {
-        if(res.reason === "win") dispatch(GAME_OVER(`User ${res.winner} win!`));
+        if(res.reason === "win") dispatch(GAME_OVER(`Player ${res.winner} win!`));
         else if(res.reason === "draw") dispatch(GAME_OVER("It's a draw!"));
-        else if(res.reason === "left") dispatch(GAME_OVER("User left the room!"));
+        else if(res.reason === "left") dispatch(GAME_OVER("Player left the room!"));
     }
 
 
@@ -49,7 +49,7 @@ const App = ({room, message}) => {
                 </>
                 :
                 <>
-                    <span className="status">{message? message : "Waiting fo users..."}</span>
+                    <span className="status">{message? message : "Waiting fo players..."}</span>
                     <div className="wrapper">
 
                         <Users/>
